@@ -1,0 +1,8 @@
+{
+  "name": "Remix Solareign Solar Power Services V1 (OFFICIAL)",
+  "description": "Renewable solar energy solutions, rooftop solar packages, and expert solar engineering by SolarEnVest in Biñan, Philippines.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,393 @@
+import { useState, MouseEvent } from 'react';
+import { Facebook, Instagram, Video, X, ShieldCheck, FileText, Lock, ShieldAlert, ExternalLink } from 'lucide-react';
+import SolareignLogo from './SolareignLogo';
+import { useSolareignData } from '../context/DataContext';
+
+interface FooterProps {
+  onNavigate?: (page: string) => void;
+  onGetQuotation?: () => void;
+}
+
+export default function Footer({ onNavigate, onGetQuotation }: FooterProps) {
+  const { settings, socialLinks } = useSolareignData();
+  const [activeModal, setActiveModal] = useState<'admin' | 'privacy' | 'terms' | 'safety' | null>(null);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavClick = (e: MouseEvent, target: string) => {
+    e.preventDefault();
+    if (target === 'quote') {
+      if (onNavigate) {
+        onNavigate('quotation');
+      } else if (onGetQuotation) {
+        onGetQuotation();
+      } else {
+        scrollToTop();
+      }
+      return;
+    }
+
+    if (target === 'home') {
+      if (onNavigate) {
+        onNavigate('home');
+        scrollToTop();
+      }
+      return;
+    }
+
+    // Locked: Any buttons, links outside of Home and Get a Quotation trigger no action
+    return;
+  };
+
+  const servicesList = [
+    'Battery Backup Installation',
+    'Whole-Home UPS/Inverter Upgrades',
+    'Panel Cleaning & Inspection',
+    'Performance Monitoring Setup',
+    'System Health Checks & Inverter Diagnostics',
+    'Net Metering Application Assistance',
+  ];
+
+  const quickLinks = [
+    { label: 'Home', id: 'home', isLocked: false },
+    { label: 'About Us', id: 'about', isLocked: true },
+    { label: 'Services', id: 'services', isLocked: true },
+    { label: 'Portfolio', id: 'portfolio', isLocked: true },
+    { label: 'Why Choose Us', id: 'why-choose-us', isLocked: true },
+    { label: 'FAQs', id: 'faq', isLocked: true },
+  ];
+
+  return (
+    <footer className="relative bg-white text-slate-800 border-t border-slate-200/90 pt-16 pb-12 overflow-hidden">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* 4-Column Layout Following Reference Structural Flow */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 text-left">
+          
+          {/* Column 1: Brand Logo, Narrative Bio, Circular Social Buttons */}
+          <div className="lg:col-span-4 space-y-5">
+            <div className="flex items-center gap-3">
+              <SolareignLogo variant="dark" />
+            </div>
+
+            <p className="text-sm text-slate-600 leading-relaxed max-w-sm font-normal">
+              SolarEnVest delivers premium, Tier-1 engineered solar power solutions across the Philippines, establishing the absolute gold standard of clean energy performance, financial savings, and structural integrity.
+            </p>
+
+            {/* Circular Social & Integrated Channel Icons */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-2">
+              <a
+                href={socialLinks.facebookUrl || "https://web.facebook.com/SolarEnVest"}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook Page"
+                title="Facebook Page"
+                className="w-10 h-10 rounded-full border border-slate-200 bg-slate-50 hover:bg-[#4A86C6] hover:border-[#4A86C6] text-slate-600 hover:text-white flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs"
+              >
+                <Facebook className="w-4 h-4 fill-current" />
+              </a>
+              <a
+                href={socialLinks.instagramUrl || "https://instagram.com"}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram Profile"
+                title="Instagram Profile"
+                className="w-10 h-10 rounded-full border border-slate-200 bg-slate-50 hover:bg-[#4A86C6] hover:border-[#4A86C6] text-slate-600 hover:text-white flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href={socialLinks.tiktokUrl || "https://tiktok.com/@powershift"}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Media and Video Showcase"
+                title="TikTok Showcase"
+                className="w-10 h-10 rounded-full border border-slate-200 bg-slate-50 hover:bg-[#4A86C6] hover:border-[#4A86C6] text-slate-600 hover:text-white flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs"
+              >
+                <Video className="w-4 h-4" />
+              </a>
+              {(socialLinks.customUrls || []).map((customUrl) => (
+                <a
+                  key={customUrl.id}
+                  href={customUrl.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={customUrl.name}
+                  title={`${customUrl.name} (${customUrl.url})`}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-slate-50 hover:bg-[#4A86C6] hover:border-[#4A86C6] text-slate-600 hover:text-white flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Column 2: OUR SERVICES (Locked links) */}
+          <div className="lg:col-span-3 space-y-4">
+            <h4 className="text-xs sm:text-sm font-black uppercase tracking-widest text-[#4A86C6]">
+              OUR SERVICES
+            </h4>
+            <ul className="space-y-2.5 text-sm">
+              {servicesList.map((service, idx) => (
+                <li key={idx}>
+                  <button
+                    type="button"
+                    id={`footer-service-link-${idx + 1}`}
+                    onClick={(e) => handleNavClick(e, 'services')}
+                    aria-disabled="true"
+                    className="text-slate-600 cursor-default font-normal block"
+                  >
+                    {service}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 3: QUICK LINKS (Home & Get A Quotation active, others locked) */}
+          <div className="lg:col-span-2 space-y-4">
+            <h4 className="text-xs sm:text-sm font-black uppercase tracking-widest text-[#4A86C6]">
+              QUICK LINKS
+            </h4>
+            <ul className="space-y-2.5 text-sm">
+              {quickLinks.map((link) => (
+                <li key={link.id}>
+                  <button
+                    type="button"
+                    id={`footer-quick-link-${link.id}`}
+                    onClick={(e) => handleNavClick(e, link.id)}
+                    aria-disabled={link.isLocked}
+                    className={`text-slate-600 font-normal block ${
+                      link.isLocked
+                        ? 'cursor-default'
+                        : 'hover:text-[#4A86C6] transition-colors cursor-pointer hover:translate-x-0.5 transform duration-150'
+                    }`}
+                  >
+                    {link.label}
+                  </button>
+                </li>
+              ))}
+              {/* Highlighted Action: Get A Quotation (Active Secondary Growth Green #0A8A4B CTA) */}
+              <li className="pt-2">
+                <button
+                  type="button"
+                  id="footer-get-quotation-link"
+                  onClick={(e) => handleNavClick(e, 'quote')}
+                  className="text-sm font-black text-[#0A8A4B] hover:text-[#4A86C6] tracking-wide uppercase transition-colors text-left cursor-pointer block underline decoration-[#FBB017] decoration-2 underline-offset-4"
+                >
+                  Get A Quotation
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: CONTACT DETAILS & ADDRESS */}
+          <div className="lg:col-span-3 space-y-4">
+            <h4 className="text-xs sm:text-sm font-black uppercase tracking-widest text-[#4A86C6]">
+              CONTACT DETAILS &amp; ADDRESS
+            </h4>
+
+            <div className="space-y-4 text-sm">
+              {/* Office Address */}
+              <div>
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  OFFICE ADDRESS
+                </div>
+                <p className="text-slate-700 mt-1 leading-snug font-normal">
+                  Lot 30, Blk 14, Juana 3B Subdivision, Biñan, Philippines, 4024
+                </p>
+              </div>
+
+              {/* Company Number */}
+              <div>
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  COMPANY NUMBER
+                </div>
+                {(() => {
+                  const rawHotline = settings.hotline;
+                  const displayHotline = (!rawHotline || rawHotline.includes('843') || rawHotline.includes('0908'))
+                    ? '0917 502 3328'
+                    : rawHotline;
+                  return (
+                    <a
+                      href={`tel:${displayHotline.replace(/\s+/g, '')}`}
+                      className="text-slate-800 hover:text-[#4A86C6] transition-colors mt-1 block font-medium"
+                    >
+                      {displayHotline}
+                    </a>
+                  );
+                })()}
+              </div>
+
+              {/* Company Email */}
+              <div>
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  COMPANY EMAIL
+                </div>
+                <a
+                  href={`mailto:${settings.contactEmail || 'solarenvest@gmail.com'}`}
+                  className="text-slate-800 hover:text-[#4A86C6] transition-colors mt-1 block font-medium break-all"
+                >
+                  {settings.contactEmail || 'solarenvest@gmail.com'}
+                </a>
+              </div>
+
+              {/* Operating Hours */}
+              <div>
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  OPERATING HOURS
+                </div>
+                <p className="text-slate-700 mt-1 leading-snug font-normal">
+                  Mon - Sat: 8:00 AM - 5:00 PM
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Horizontal Divider Line */}
+        <div className="border-t border-slate-200/90 pt-8" />
+
+        {/* Bottom Bar: Copyright on Left, Legal & Compliance on Right (Locked) */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 text-center md:text-left">
+          <p className="leading-relaxed">
+            &copy; {new Date().getFullYear()} SolarEnVest. All engineering assets and system layouts are proprietary.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-3 gap-y-1 text-xs font-semibold tracking-wider uppercase text-slate-500">
+            <button
+              type="button"
+              id="footer-admin-portal-btn"
+              onClick={(e) => { e.preventDefault(); }}
+              aria-disabled="true"
+              className="text-slate-400 cursor-default"
+            >
+              PORTAL
+            </button>
+            <span className="text-slate-300 select-none" aria-hidden="true">|</span>
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); }}
+              aria-disabled="true"
+              className="text-slate-400 cursor-default"
+            >
+              PRIVACY POLICY
+            </button>
+            <span className="text-slate-300 select-none" aria-hidden="true">|</span>
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); }}
+              aria-disabled="true"
+              className="text-slate-400 cursor-default"
+            >
+              TERMS OF USE
+            </button>
+            <span className="text-slate-300 select-none" aria-hidden="true">|</span>
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); }}
+              aria-disabled="true"
+              className="text-slate-400 cursor-default"
+            >
+              SAFETY STANDARD COMPLIANCE
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Legal & Administration Information Modals */}
+      {activeModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="relative w-full max-w-lg bg-slate-900 border border-slate-700 rounded-2xl p-6 sm:p-8 text-white shadow-2xl text-left">
+            <button
+              type="button"
+              onClick={() => setActiveModal(null)}
+              aria-label="Close dialog"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {activeModal === 'admin' && (
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-[#0F5A29] text-[#88D628] flex items-center justify-center">
+                  <Lock className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black text-white">Authorized Engineering Portal</h3>
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  Access to the central inverter telemetry database, single-line diagrams (SLD), and field operations scheduling is restricted to certified Solareign Solar field engineers.
+                </p>
+                <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-slate-300 space-y-1">
+                  <div className="font-bold text-[#88D628]">Support Dispatch:</div>
+                  <div>For credentials or portal maintenance, contact <span className="text-white font-medium">solareignpower09@gmail.com</span>.</div>
+                </div>
+              </div>
+            )}
+
+            {activeModal === 'privacy' && (
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-[#0F5A29] text-[#88D628] flex items-center justify-center">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black text-white">Privacy Policy &amp; Data Security</h3>
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  Solareign Solar Power Services strictly adheres to the Philippine Data Privacy Act of 2012 (RA 10173). Electrical utility meter data, roof CAD assessments, and homeowner contact information collected during quotation generation are encrypted and never shared with third parties.
+                </p>
+                <ul className="text-xs text-slate-400 space-y-1.5 list-disc pl-4">
+                  <li>Utility bill data is analyzed exclusively for photovoltaic kW sizing.</li>
+                  <li>Net metering application records are retained securely per ERC compliance rules.</li>
+                </ul>
+              </div>
+            )}
+
+            {activeModal === 'terms' && (
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-[#0F5A29] text-[#88D628] flex items-center justify-center">
+                  <FileText className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black text-white">Terms of Engineering &amp; Service</h3>
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  All solar installations include our standard warranty commitments: 25-year linear solar panel output guarantee, 10-year grid-tie inverter warranty, and 5-year comprehensive workmanship warranty.
+                </p>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Yield predictions are simulated using PVsyst meteorological datasets for Cavite and Greater Manila. Final turnkey installations are subject to structural load inspection.
+                </p>
+              </div>
+            )}
+
+            {activeModal === 'safety' && (
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-[#0F5A29] text-[#88D628] flex items-center justify-center">
+                  <ShieldAlert className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black text-white">Safety Standard Compliance</h3>
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  Every Solareign Solar project is built strictly to the Philippine Electrical Code (PEC 2017) and IEEE 1547 interconnection standards. Systems include rapid-shutdown DC isolators, class-leading surge protection devices (SPD), and ground-fault protection.
+                </p>
+                <div className="p-3 rounded-lg bg-emerald-950/60 border border-emerald-800/60 text-xs text-emerald-200">
+                  Signed and sealed by Professional Electrical Engineers (PEE) for full Meralco net-metering approval.
+                </div>
+              </div>
+            )}
+
+            <div className="pt-4 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setActiveModal(null)}
+                className="px-5 py-2.5 rounded-xl bg-[#88D628] hover:bg-[#7bc421] text-[#0F5A29] font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </footer>
+  );
+}
